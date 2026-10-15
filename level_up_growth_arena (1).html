@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEVEL UP — Growth Arena</title>
+<style>
+:root{
+ --bg:#f4f8ff;--panel:#ffffff;--panel2:#eaf2ff;--text:#10356f;--muted:#536b91;
+ --accent:#0878f9;--accent2:#1455c0;--good:#12865b;--bad:#d9365b;--line:#c6dcff;
+ --glow:0 5px 22px #1455c015;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f4f8ff;color:var(--text);min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:750;transition:.18s}
+button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.primary{background:linear-gradient(110deg,var(--accent),#ffcb69);color:#171321}
+.secondary{background:#e8f2ff;color:#1455a6;border:1px solid #b8d6ff}
+.danger{background:#fff0f2;color:#a51f3b;border:1px solid #f0b7c2}
+.small{padding:7px 10px;font-size:.85rem}
+.wrap{max-width:1180px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,var(--accent),#ff5b61);display:grid;place-items:center;font-size:25px;box-shadow:var(--glow)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(1.45rem,3vw,2.2rem);margin-bottom:3px;letter-spacing:-.04em}
+h2{font-size:1.15rem;margin-bottom:14px}
+.subtitle,.muted{color:var(--muted)}
+.subtitle{margin:0;font-size:.93rem}
+.pill{border:1px solid #b8d6ff;border-radius:999px;padding:8px 12px;color:#1455a6;background:#eef6ff;font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{background:#ffffff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--glow);min-width:0}
+.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}
+.hero{padding:26px;background:linear-gradient(115deg,#0878f9,#1455c0 75%,#073b91);color:#ffffff;position:relative;overflow:hidden;border-color:#0878f9}
+.hero:after{content:"⚡";position:absolute;right:24px;top:12px;font-size:100px;opacity:.08;transform:rotate(12deg)}
+.hero h2{font-size:clamp(1.4rem,3vw,2.2rem);margin-bottom:8px}
+.hero p{max-width:650px;color:#eaf3ff;line-height:1.55;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.stat{padding:15px;border:1px solid var(--line);background:#f3f8ff;border-radius:15px}
+.stat strong{display:block;font-size:1.65rem;margin:5px 0}
+.stat span{color:var(--muted);font-size:.83rem}
+form{display:grid;gap:11px}
+label{font-size:.86rem;color:#c8d3e9;display:grid;gap:6px}
+input,textarea,select{width:100%;padding:12px 13px;border-radius:11px;background:#ffffff;border:1px solid #a9c9f5;color:#10356f;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #ff9d2e18}
+textarea{resize:vertical;min-height:84px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{background:#eaf2ff;color:#315782;border:1px solid var(--line)}
+.tab.active{background:var(--accent);color:#191625;border-color:transparent}
+.person-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;background:#0c1427}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--good);display:inline-block}
+.task{border:1px solid var(--line);background:#fafdff;border-radius:14px;padding:14px;margin-bottom:10px}
+.task-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.task h3{font-size:1rem;margin-bottom:6px}
+.task p{color:var(--muted);font-size:.9rem;line-height:1.45;margin-bottom:10px;white-space:pre-wrap}
+.tag{font-size:.75rem;border-radius:999px;padding:5px 8px;background:#283652;color:#dce5f7;white-space:nowrap}
+.tag.done{background:#153e35;color:#83f4c7}.tag.pending{background:#4b3520;color:#ffd08a}
+.empty{border:1px dashed #a9c9f5;border-radius:14px;padding:22px;text-align:center;color:var(--muted);background:#f8fbff}
+.bar{height:9px;border-radius:99px;background:#d8e8ff;overflow:hidden;margin-top:8px}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:99px;transition:width .3s}
+.report{padding:12px 0;border-bottom:1px solid var(--line)}
+.report:last-child{border-bottom:0}
+.report-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.score{font-size:1.35rem;font-weight:850;color:var(--accent)}
+canvas{width:100%;height:210px;display:block}
+footer{color:var(--muted);text-align:center;padding:28px 10px;font-size:.82rem}
+.hidden{display:none!important}
+.notice{border:1px solid #a9c9f5;background:#edf5ff;color:#234b80;border-radius:12px;padding:12px 14px;font-size:.87rem;line-height:1.45}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+@media(max-width:800px){.span8,.span7,.span6,.span5,.span4{grid-column:span 12}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:14px}header{align-items:flex-start;flex-direction:column}.hero:after{font-size:70px;right:8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="brand"><div class="logo">⚡</div><div><h1>LEVEL UP <span style="color:var(--accent)">/</span> GROWTH ARENA</h1><p class="subtitle">Small actions. Honest reports. Visible progress.</p></div></div>
+ <div class="row" style="flex:0 1 auto"><span class="pill">✦ Two-player accountability</span><button class="secondary small" id="themeBtn">🎨 Change theme</button></div>
+</header>
+
+<section id="setup" class="card">
+ <h2>👋 Enter your arena</h2>
+ <p class="muted">Choose the two names for your shared growth space. You can change them later.</p>
+ <form id="setupForm">
+  <div class="row">
+   <label>Person 1 name<input id="name1" maxlength="30" placeholder="e.g. Your name" required></label>
+   <label>Person 2 name<input id="name2" maxlength="30" placeholder="e.g. Friend's name" required></label>
+  </div>
+  <button class="primary" type="submit">Enter the arena →</button>
+ </form>
+</section>
+
+<main id="app" class="hidden">
+ <section class="card hero">
+  <div class="pill" style="display:inline-block;margin-bottom:14px">YOUR DAILY RESET</div>
+  <h2>Don't wait to feel ready.<br>Start with one small action.</h2>
+  <p>What are you going to do today? Pick a meaningful task, do it yourself, then report what really happened. Your progress belongs to you.</p>
+  <div class="row" style="max-width:440px;flex:initial"><button class="primary" onclick="document.getElementById('taskTitle').focus()">＋ Set a target</button><button class="secondary" id="todayPrompt">Give me a prompt ↗</button></div>
+  <div class="stats">
+   <div class="stat"><span>Tasks completed</span><strong id="statDone">0</strong><span>Across both people</span></div>
+   <div class="stat"><span>Reports submitted</span><strong id="statReports">0</strong><span>Daily check-ins</span></div>
+   <div class="stat"><span>Average rating</span><strong id="statScore">—</strong><span>Out of 100</span></div>
+   <div class="stat"><span>Current streak</span><strong id="statStreak">0</strong><span>Days with a report</span></div>
+  </div>
+ </section>
+
+ <div class="grid" style="margin-top:16px">
+  <section class="card span5">
+   <h2>🎯 Create a target</h2>
+   <form id="taskForm">
+    <label>Task title<input id="taskTitle" maxlength="100" placeholder="e.g. Learn one circuit concept" required></label>
+    <label>Who owns this task?
+     <select id="taskOwner"></select>
+    </label>
+    <label>Category
+     <select id="taskCategory"><option>Learning</option><option>Project</option><option>Health & routine</option><option>Career</option><option>Personal</option><option>Other</option></select>
+    </label>
+    <label>What does “done” look like?<textarea id="taskDetails" maxlength="500" placeholder="Make the target clear and achievable..."></textarea></label>
+    <label>Target date<input id="taskDate" type="date" required></label>
+    <button class="primary" type="submit">Add task +</button>
+   </form>
+  </section>
+
+  <section class="card span7">
+   <h2>📌 Shared task board</h2>
+   <div class="tabs" id="taskTabs">
+    <button class="tab active" data-filter="all">Everyone</button>
+    <button class="tab" data-filter="open">To do</button>
+    <button class="tab" data-filter="done">Completed</button>
+   </div>
+   <div id="taskList"></div>
+  </section>
+
+  <section class="card span6">
+   <h2>📝 Daily report</h2>
+   <p class="muted">Report honestly. A small real step counts more than an impressive-sounding story.</p>
+   <form id="reportForm">
+    <label>Your name<select id="reportOwner"></select></label>
+    <label>What did you work on today?<textarea id="reportWork" maxlength="1000" placeholder="Describe the task or activity you actually did..." required></textarea></label>
+    <label>What did you learn or improve?<textarea id="reportLearn" maxlength="700" placeholder="A concept, skill, habit, or lesson..." required></textarea></label>
+    <label>What got in the way / next step?<textarea id="reportNext" maxlength="500" placeholder="Optional — what will you try next?"></textarea></label>
+    <button class="primary" type="submit">Submit daily report ✓</button>
+   </form>
+   <p class="muted" style="font-size:.8rem;margin:12px 0 0">One report per person per day. Submitting again updates that day's report until it is rated.</p>
+  </section>
+
+  <section class="card span6">
+   <h2>🏅 Rate your partner's day</h2>
+   <p class="muted">Rate the effort, follow-through, and honesty you can see—not someone's worth. Only the other person can rate a report.</p>
+   <form id="rateForm">
+    <label>Who is rating this report?<select id="raterOwner"></select></label>
+    <label>Report to rate<select id="rateReport"></select></label>
+    <label>Score: <strong id="scoreLabel" style="color:var(--accent)">80 / 100</strong><input id="rating" type="range" min="0" max="100" value="80"></label>
+    <label>Feedback<textarea id="feedback" maxlength="400" placeholder="One thing they did well + one useful next step..."></textarea></label>
+    <button class="primary" type="submit">Save rating</button>
+   </form>
+   <div id="rateHint" class="muted" style="font-size:.82rem;margin-top:10px"></div>
+  </section>
+
+  <section class="card span7">
+   <h2>📈 Growth over time</h2>
+   <p class="muted">Daily ratings, based on reports that have been rated.</p>
+   <canvas id="chart" width="700" height="220" aria-label="Growth scores chart"></canvas>
+   <div class="row" id="personStats"></div>
+  </section>
+
+  <section class="card span5">
+   <h2>📚 Recent reports</h2>
+   <div id="reportList"></div>
+  </section>
+
+  <section class="card span12">
+   <div class="row">
+    <div><h2 style="margin-bottom:5px">⚙️ Your arena settings</h2><p class="muted" style="margin:0">Change names, switch the visual theme, or export your records.</p></div>
+    <button class="secondary" id="renameBtn">Edit names</button>
+    <button class="secondary" id="exportBtn">Export backup (.json)</button>
+    <button class="danger" id="resetBtn">Reset all data</button>
+   </div>
+   <hr>
+   <div class="notice">Prototype note: this version stores data in this browser on this device. It does not automatically sync between two phones or laptops. For real shared access across devices, the next step is to connect a backend such as Firebase or Supabase and add sign-in/security.</div>
+  </section>
+ </div>
+</main>
+<footer>LEVEL UP · Be consistent, not perfect. Rest is part of progress.</footer>
+</div>
+<script>
+const KEY='levelup_growth_arena_v1';
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toLocaleDateString('en-CA');
+let data=load();
+let taskFilter='all';
+let themeIndex=0;
+const themes=[
+ {bg:'#f4f8ff',panel:'#ffffff',accent:'#0878f9',accent2:'#1455c0',good:'#12865b'},
+ {bg:'#effcf8',panel:'#ffffff',accent:'#078b72',accent2:'#0878f9',good:'#12865b'},
+ {bg:'#fff4fa',panel:'#ffffff',accent:'#d83b8d',accent2:'#7c4dff',good:'#12865b'},
+ {bg:'#fffaf0',panel:'#ffffff',accent:'#c47a00',accent2:'#0878f9',good:'#12865b'}
+];
+function blank(){return {people:[],tasks:[],reports:[],nextId:1}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||blank()}catch(e){return blank()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function init(){
+ if(data.people.length===2){$('setup').classList.add('hidden');$('app').classList.remove('hidden');}
+ $('taskDate').value=today();
+ fillPeople();render();
+}
+$('setupForm').addEventListener('submit',e=>{
+ e.preventDefault();const a=$('name1').value.trim(),b=$('name2').value.trim();
+ if(!a||!b||a.toLowerCase()===b.toLowerCase()){alert('Enter two different names.');return}
+ data.people=[a,b];save();$('setup').classList.add('hidden');$('app').classList.remove('hidden');fillPeople();render();
+});
+function fillPeople(){
+ if(data.people.length!==2)return;
+ ['taskOwner','reportOwner','raterOwner'].forEach(id=>$(id).innerHTML=data.people.map((p,i)=>`<option value="${i}">${esc(p)}</option>`).join(''));
+}
+$('taskForm').addEventListener('submit',e=>{
+ e.preventDefault();if(data.people.length!==2)return;
+ data.tasks.unshift({id:data.nextId++,title:$('taskTitle').value.trim(),owner:+$('taskOwner').value,category:$('taskCategory').value,details:$('taskDetails').value.trim(),date:$('taskDate').value||today(),done:false,created:Date.now(),completedAt:null});
+ $('taskForm').reset();$('taskDate').value=today();save();
+});
+$('reportForm').addEventListener('submit',e=>{
+ e.preventDefault();const owner=+$('reportOwner').value;const day=today();
+ let existing=data.reports.find(r=>r.owner===owner&&r.date===day);
+ const payload={owner,date:day,work:$('reportWork').value.trim(),learn:$('reportLearn').value.trim(),next:$('reportNext').value.trim(),created:Date.now()};
+ if(existing){payload.id=existing.id;payload.rating=existing.rating??null;payload.feedback=existing.feedback||'';Object.assign(existing,payload)}
+ else data.reports.unshift({id:data.nextId++,...payload,rating:null,feedback:''});
+ $('reportForm').reset();save();
+});
+$('rating').addEventListener('input',()=>$('scoreLabel').textContent=$('rating').value+' / 100');
+$('rateForm').addEventListener('submit',e=>{
+ e.preventDefault();const id=+$('rateReport').value;const r=data.reports.find(x=>x.id===id);
+ if(!r){alert('Choose a report first.');return}
+ const rater=+$('raterOwner').value;
+ if(rater===r.owner){alert('You cannot rate your own report. Choose the other person as rater.');return}
+ if(r.rating!==null&&r.rating!==undefined&&!confirm('This report already has a rating. Replace it?'))return;
+ r.rating=+$('rating').value;r.feedback=$('feedback').value.trim();r.rater=rater;r.ratedAt=Date.now();save();
+});
+$('taskTabs').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-filter]');if(!b)return;taskFilter=b.dataset.filter;
+ document.querySelectorAll('#taskTabs .tab').forEach(x=>x.classList.toggle('active',x===b));renderTasks();
+});
+function toggleTask(id){const t=data.tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;t.completedAt=t.done?Date.now():null;save()}
+function deleteTask(id){if(confirm('Delete this task?')){data.tasks=data.tasks.filter(t=>t.id!==id);save()}}
+function renderTasks(){
+ let arr=data.tasks.filter(t=>taskFilter==='all'||(taskFilter==='open'&&!t.done)||(taskFilter==='done'&&t.done));
+ if(!arr.length){$('taskList').innerHTML='<div class="empty">No tasks here yet. Add one small target to get started.</div>';return}
+ $('taskList').innerHTML=arr.map(t=>`<article class="task"><div class="task-top"><div><h3>${esc(t.title)}</h3><div class="muted" style="font-size:.8rem">${esc(data.people[t.owner]||'Unknown')} · ${esc(t.category)} · Due ${esc(t.date)}</div></div><span class="tag ${t.done?'done':'pending'}">${t.done?'✓ Done':'In progress'}</span></div>${t.details?`<p>${esc(t.details)}</p>`:''}<div class="row"><button class="${t.done?'secondary':'primary'} small" onclick="toggleTask(${t.id})">${t.done?'Mark to do':'Mark completed'}</button><button class="secondary small" onclick="deleteTask(${t.id})">Delete</button></div></article>`).join('');
+}
+function renderReports(){
+ const rated=data.reports.filter(r=>r.rating!==null&&r.rating!==undefined);
+ const options=data.reports.slice().sort((a,b)=>b.created-a.created);
+ $('rateReport').innerHTML=options.map(r=>`<option value="${r.id}">${esc(data.people[r.owner])} · ${esc(r.date)} · ${esc(r.work.slice(0,42))}${r.work.length>42?'…':''}${r.rating!==null&&r.rating!==undefined?' (rated '+r.rating+')':''}</option>`).join('');
+ $('rateForm').classList.toggle('hidden',!options.length);
+ $('rateHint').textContent=options.length?'Choose your partner’s report. You cannot rate your own report.':'No reports yet — submit a daily report first.';
+ if(options.length){const selected=options.find(r=>r.id===+$('rateReport').value)||options[0];$('rateReport').value=selected.id;$('rateHint').textContent=`Selected: ${data.people[selected.owner]}'s report. The other person should rate it.`}
+ $('reportList').innerHTML=options.length?options.slice(0,8).map(r=>`<div class="report"><div class="report-head"><strong>${esc(data.people[r.owner])}</strong><span class="muted" style="font-size:.8rem">${esc(r.date)}</span></div><p style="margin:8px 0 5px;white-space:pre-wrap">${esc(r.work)}</p><p class="muted" style="font-size:.86rem;margin-bottom:8px">Learned: ${esc(r.learn)}</p>${r.next?`<p class="muted" style="font-size:.84rem">Next: ${esc(r.next)}</p>`:''}<div class="report-head"><span>${r.rating===null||r.rating===undefined?'<span class="tag pending">Awaiting rating</span>':`<span class="score">${r.rating}/100</span>`}</span>${r.feedback?`<span class="muted" style="font-size:.82rem">${esc(r.feedback)}</span>`:''}</div></div>`).join(''):'<div class="empty">Your daily reports will appear here.</div>';
+ $('statReports').textContent=data.reports.length;
+ $('statScore').textContent=rated.length?Math.round(rated.reduce((s,r)=>s+r.rating,0)/rated.length):'—';
+ const days=new Set(data.reports.map(r=>r.date));let streak=0;const d=new Date();
+ while(true){const key=d.toLocaleDateString('en-CA');if(days.has(key)){streak++;d.setDate(d.getDate()-1)}else break}
+ $('statStreak').textContent=streak;
+}
+function renderStats(){
+ $('statDone').textContent=data.tasks.filter(t=>t.done).length;
+ $('personStats').innerHTML=data.people.map((p,i)=>{
+ const tasks=data.tasks.filter(t=>t.owner===i),done=tasks.filter(t=>t.done).length;
+ const reports=data.reports.filter(r=>r.owner===i),rated=reports.filter(r=>r.rating!==null&&r.rating!==undefined);
+ const avg=rated.length?Math.round(rated.reduce((s,r)=>s+r.rating,0)/rated.length):null;
+ return `<div class="stat" style="flex:1"><span>${esc(p)}</span><strong>${avg===null?'—':avg+'/100'}</strong><span>${done}/${tasks.length} tasks · ${reports.length} reports</span><div class="bar"><span style="width:${tasks.length?done/tasks.length*100:0}%"></span></div></div>`
+ }).join('');
+ drawChart();
+}
+function drawChart(){
+ const c=$('chart'),ctx=c.getContext('2d');const w=c.width,h=c.height;ctx.clearRect(0,0,w,h);
+ const rated=data.reports.filter(r=>r.rating!==null&&r.rating!==undefined).sort((a,b)=>a.date.localeCompare(b.date));
+ const pad={l:38,r:15,t:18,b:34},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+ ctx.strokeStyle='#2b3855';ctx.fillStyle='#a9b5cf';ctx.font='12px Segoe UI, sans-serif';ctx.lineWidth=1;
+ [0,25,50,75,100].forEach(v=>{const y=pad.t+ch-(v/100)*ch;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(v,pad.l-28,y+4)});
+ if(!rated.length){ctx.fillStyle='#a9b5cf';ctx.font='14px Segoe UI';ctx.fillText('Your first rated report will start the chart.',pad.l+8,h/2);return}
+ const grouped={};rated.forEach(r=>{const k=r.date;(grouped[k]??=[]).push(r.rating)});
+ const points=Object.entries(grouped).map(([date,vals])=>({date,score:vals.reduce((a,b)=>a+b,0)/vals.length}));
+ const x=i=>points.length===1?pad.l+cw/2:pad.l+i*cw/(points.length-1),y=v=>pad.t+ch-(v/100)*ch;
+ ctx.strokeStyle='#ff9d2e';ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(x(i),y(p.score)):ctx.moveTo(x(i),y(p.score)));ctx.stroke();
+ points.forEach((p,i)=>{ctx.fillStyle='#ffcb69';ctx.beginPath();ctx.arc(x(i),y(p.score),4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#a9b5cf';ctx.font='10px Segoe UI';ctx.fillText(p.date.slice(5),x(i)-15,h-12)});
+}
+function render(){
+ if(data.people.length!==2)return;
+ fillPeople();renderTasks();renderReports();renderStats();
+}
+$('rateReport').addEventListener('change',()=>{
+ const r=data.reports.find(x=>x.id===+$('rateReport').value);if(!r)return;
+ $('rating').value=r.rating??80;$('scoreLabel').textContent=$('rating').value+' / 100';$('feedback').value=r.feedback||'';
+});
+$('todayPrompt').addEventListener('click',()=>{
+ const prompts=['Learn one small concept for 20 minutes.','Make one real improvement to your project.','Review yesterday’s work and write down one lesson.','Finish one task you have been postponing.','Help your partner solve one problem.','Take a proper break, then choose one manageable next step.'];
+ alert(prompts[Math.floor(Math.random()*prompts.length)]);
+});
+$('themeBtn').addEventListener('click',()=>{
+ themeIndex=(themeIndex+1)%themes.length;const t=themes[themeIndex],r=document.documentElement;
+ r.style.setProperty('--bg',t.bg);r.style.setProperty('--panel',t.panel);r.style.setProperty('--accent',t.accent);r.style.setProperty('--accent2',t.accent2);r.style.setProperty('--good',t.good);document.body.style.background=t.bg;
+});
+$('renameBtn').addEventListener('click',()=>{
+ const a=prompt('Name for Person 1:',data.people[0]);if(a===null)return;
+ const b=prompt('Name for Person 2:',data.people[1]);if(b===null)return;
+ if(!a.trim()||!b.trim()||a.trim().toLowerCase()===b.trim().toLowerCase()){alert('Please use two different names.');return}
+ data.people=[a.trim(),b.trim()];save();
+});
+$('exportBtn').addEventListener('click',()=>{
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='level-up-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);
+});
+$('resetBtn').addEventListener('click',()=>{
+ if(!confirm('This permanently clears all tasks and reports saved in this browser. Export a backup first if you need one. Continue?'))return;
+ localStorage.removeItem(KEY);data=blank();location.reload();
+});
+init();
+</script>
+</body>
+</html>
